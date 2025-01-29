@@ -2,8 +2,8 @@ package com.cipri.welcome.controller;
 
 import com.cipri.welcome.dto.UserDTO;
 import com.cipri.welcome.service.IUserPersonService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +24,7 @@ public class ArtisanController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO userDTO){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userPersonService.createUser(userDTO));
     }
@@ -38,6 +38,4 @@ public class ArtisanController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userPersonService.deleteUser(id));
     }
-
-
 }

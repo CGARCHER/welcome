@@ -1,6 +1,7 @@
 package com.cipri.welcome.service;
 
 import com.cipri.welcome.dto.UserDTO;
+import com.cipri.welcome.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -31,6 +32,9 @@ public class UserPersonImpl implements IUserPersonService {
 
     @Override
     public UserDTO getUser(Integer id) {
+        if(!users.containsKey(id)) {
+            throw new NotFoundException("No existe persona con id:" + id);
+        }
         return users.get(id);
     }
 
