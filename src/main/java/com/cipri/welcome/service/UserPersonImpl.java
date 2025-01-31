@@ -1,62 +1,69 @@
 package com.cipri.welcome.service;
 
 import com.cipri.welcome.dto.UserDTO;
+import com.cipri.welcome.entity.UserEntity;
 import com.cipri.welcome.exception.NotFoundException;
+import com.cipri.welcome.repository.UserRepository;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserPersonImpl implements IUserPersonService {
+    private final UserRepository userRepository;
 
-    private Map<Integer, UserDTO> users;
-
-    public UserPersonImpl() {
-        //HARDCODE-TEMPORAL
-        initData();
+    public UserPersonImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public List<UserDTO> getAll() {
-        return this.users.values().stream().toList();
+        return userRepository.findAll().stream().
+                map(user ->
+                        new UserDTO(user.getId().intValue(), user.getName(), user.getAppl()))
+                .toList();
+
     }
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        userDTO.setId(this.calculateNextKey());
-        users.put(userDTO.getId(), userDTO);
-        return userDTO;
+        UserEntity userEntity = userRepository.save(UserEntity.builder()
+                .name(userDTO.getName())
+                .appl(userDTO.getAppl()).build());
+
+        return UserDTO.builder()
+                .id(userEntity.getId().intValue())
+                .name(userEntity.getName())
+                .appl(userEntity.getAppl())
+                .build();
     }
 
     @Override
     public UserDTO getUser(Integer id) {
-        if(!users.containsKey(id)) {
+       Optional<UserEntity> optionalUserEntity =
+               userRepository.findById(Long.valueOf(id));
+       UserDTO userDTO = null;
+        if(optionalUserEntity.isPresent()) {
+            UserEntity userEntity = optionalUserEntity.get();
+            userDTO = UserDTO.builder()
+                    .id(userEntity.getId().intValue())
+                    .name(userEntity.getName())
+                    .appl(userEntity.getAppl())
+                    .build();
+        }
+        else{
             throw new NotFoundException("No existe persona con id:" + id);
         }
-        return users.get(id);
+        return userDTO;
     }
 
     @Override
     public boolean deleteUser(Integer id) {
-        return users.remove(id)!=null;
-    }
-
-    private void initData(){
-        this.users = new HashMap<>();
-        UserDTO userDTO = new UserDTO(1, "Carlos","Alcaraz");
-        this.users.put(1, userDTO);
-        this.users.put(2, UserDTO.builder().id(2).name("Novak").appl("Djokovic").build());
-    }
-
-    private Integer calculateNextKey(){
-        Integer max_value = 0;
-        for(Integer key : this.users.keySet()){
-            if(key > max_value){
-                max_value = key;
-            }
-        }
-        return max_value + 1;
+        userRepository.deleteById(Long.valueOf(id));
+        return true;
     }
 }

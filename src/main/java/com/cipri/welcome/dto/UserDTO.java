@@ -15,8 +15,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserDTO {
 
-    @NotNull(message = "El id no puede estar vacío")
-    @Min(value=1, message = "El id tiene que ser mayor de 0")
     private Integer id;
 
     @NotEmpty(message = "El nombre no puede estar vacío")
