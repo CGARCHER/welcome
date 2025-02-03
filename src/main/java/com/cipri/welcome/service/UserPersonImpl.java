@@ -3,43 +3,33 @@ package com.cipri.welcome.service;
 import com.cipri.welcome.dto.UserDTO;
 import com.cipri.welcome.entity.UserEntity;
 import com.cipri.welcome.exception.NotFoundException;
+import com.cipri.welcome.mapper.UserMapper;
 import com.cipri.welcome.repository.UserRepository;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class UserPersonImpl implements IUserPersonService {
+    private final UserMapper userMapper;
     private final UserRepository userRepository;
 
-    public UserPersonImpl(UserRepository userRepository) {
+    public UserPersonImpl(UserMapper userMapper, UserRepository userRepository) {
+        this.userMapper = userMapper;
         this.userRepository = userRepository;
     }
 
     @Override
     public List<UserDTO> getAll() {
-        return userRepository.findAll().stream().
-                map(user ->
-                        new UserDTO(user.getId().intValue(), user.getName(), user.getAppl()))
-                .toList();
-
+        return userMapper.userEntityToDTO(userRepository.findAll());
     }
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        UserEntity userEntity = userRepository.save(UserEntity.builder()
-                .name(userDTO.getName())
-                .appl(userDTO.getAppl()).build());
-
-        return UserDTO.builder()
-                .id(userEntity.getId().intValue())
-                .name(userEntity.getName())
-                .appl(userEntity.getAppl())
-                .build();
+        UserEntity userEntity = userRepository.
+                save(userMapper.useDTOToEntity(userDTO));
+        return userMapper.userEntityToDTO(userEntity);
     }
 
     @Override
@@ -49,11 +39,7 @@ public class UserPersonImpl implements IUserPersonService {
        UserDTO userDTO = null;
         if(optionalUserEntity.isPresent()) {
             UserEntity userEntity = optionalUserEntity.get();
-            userDTO = UserDTO.builder()
-                    .id(userEntity.getId().intValue())
-                    .name(userEntity.getName())
-                    .appl(userEntity.getAppl())
-                    .build();
+            userDTO = userMapper.userEntityToDTO(userEntity);
         }
         else{
             throw new NotFoundException("No existe persona con id:" + id);
