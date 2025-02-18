@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: welcome
+  profiles:
+    actives: dev
+springdoc:
+  api-docs:
+    path: /api-docs
