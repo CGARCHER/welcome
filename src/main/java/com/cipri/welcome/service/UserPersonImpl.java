@@ -1,10 +1,12 @@
 package com.cipri.welcome.service;
 
+import com.cipri.welcome.dto.RequestUpdateApplDTO;
 import com.cipri.welcome.dto.UserDTO;
 import com.cipri.welcome.entity.UserEntity;
 import com.cipri.welcome.exception.NotFoundException;
 import com.cipri.welcome.mapper.UserMapper;
 import com.cipri.welcome.repository.UserRepository;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,5 +53,32 @@ public class UserPersonImpl implements IUserPersonService {
     public boolean deleteUser(Integer id) {
         userRepository.deleteById(Long.valueOf(id));
         return true;
+    }
+
+    @Override
+    public boolean deleteUserByName(String name) {
+        return userRepository.deleteByName(name)>0;
+    }
+
+    @Override
+    public List<UserDTO> getUserByName(String name) {
+       return userMapper
+               .userEntityToDTO(userRepository.findByName(name));
+    }
+
+    @Override
+    public List<UserDTO> getUserByNameContaining(String name) {
+        return userMapper
+                .userEntityToDTO(userRepository.findByNameContaining(name));
+    }
+
+    @Override
+    public UserDTO updateApplByName(RequestUpdateApplDTO requestUpdateApplDTO) {
+        boolean modificado = userRepository.updateApplByName(requestUpdateApplDTO.getName(), requestUpdateApplDTO.getAppl())>0;
+        UserDTO userDTO=null;
+        if(modificado) {
+            userDTO = userMapper.userEntityToDTO(userRepository.findByName(requestUpdateApplDTO.getName())).get(0);
+        }
+        return userDTO;
     }
 }

@@ -1,5 +1,6 @@
 package com.cipri.welcome.controller;
 
+import com.cipri.welcome.dto.RequestUpdateApplDTO;
 import com.cipri.welcome.dto.UserDTO;
 import com.cipri.welcome.service.IUserPersonService;
 import jakarta.validation.Valid;
@@ -37,5 +38,31 @@ public class ArtisanController {
     public ResponseEntity<Boolean> deleteUser(@PathVariable Integer id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userPersonService.deleteUser(id));
+    }
+
+    @GetMapping("/getByName/{name}")
+    public ResponseEntity<List<UserDTO>> getUserByName(@PathVariable String name){
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .body(userPersonService.getUserByName(name));
+    }
+
+    @GetMapping("/getByNameContaining/{name}")
+    public ResponseEntity<List<UserDTO>> getUserByNameContaining(@PathVariable String name){
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .body(userPersonService.getUserByNameContaining(name));
+    }
+
+    @DeleteMapping("/deleteByName/{name}")
+    public ResponseEntity<Boolean> deleteUser(@PathVariable String name){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userPersonService.deleteUserByName(name));
+    }
+
+    @PatchMapping("/updateByName")
+    public ResponseEntity<UserDTO> updateUserApplByName(@RequestBody RequestUpdateApplDTO requestUpdateApplDTO){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userPersonService.updateApplByName(requestUpdateApplDTO));
     }
 }
