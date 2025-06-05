@@ -6,3 +6,9 @@ spring:
     name: welcome
   profiles:
     active: dev
+# Nivel de log para la aplicación en general
+logging:
+  level:
+    root: INFO
+  file:
+    name: myapp.log

@@ -4,6 +4,8 @@ import com.cipri.welcome.dto.RequestUpdateApplDTO;
 import com.cipri.welcome.dto.UserDTO;
 import com.cipri.welcome.service.IUserPersonService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class ArtisanController {
+    private static final Logger logger = LoggerFactory.getLogger(ArtisanController.class);
+
     private final IUserPersonService userPersonService;
 
     public ArtisanController(IUserPersonService userPersonService) {
@@ -21,6 +25,11 @@ public class ArtisanController {
 
     @GetMapping("/all")
     public ResponseEntity<List<UserDTO>> getAll(){
+        logger.info("Ejecutando el métodoo ALL");
+        logger.warn("Ejecutando el métodoo ALL");
+        logger.debug("Ejecutando el métodoo ALL");
+        logger.error("Ejecutando el métodoo ALL");
+
         return ResponseEntity.ok(userPersonService.getAll());
     }
 
